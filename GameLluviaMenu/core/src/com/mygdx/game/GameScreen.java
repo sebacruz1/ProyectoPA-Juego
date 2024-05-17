@@ -11,109 +11,128 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 public class GameScreen implements Screen {
-	final GameLluviaMenu game;
+    final GameLluviaMenu game;
     private OrthographicCamera camera;
-	private SpriteBatch batch;	   
-	private BitmapFont font;
-	private Tarro tarro;
-	private Lluvia lluvia;
+    private SpriteBatch batch;
+    private BitmapFont font;
+    private Sumo sumo;
+    private Lluvia lluvia;
+    private int level;
+    private float initialSpeed;
 
-	   
-	//boolean activo = true;
-
-	public GameScreen(final GameLluviaMenu game) {
-		this.game = game;
+    public GameScreen(final GameLluviaMenu game) {
+        this.game = game;
         this.batch = game.getBatch();
         this.font = game.getFont();
-		  // load the images for the droplet and the bucket, 64x64 pixels each 	     
-		  Sound hurtSound = Gdx.audio.newSound(Gdx.files.internal("hurt.ogg"));
-		  tarro = new Tarro(new Texture(Gdx.files.internal("bucket.png")),hurtSound);
-         
-	      // load the drop sound effect and the rain background "music" 
-         Texture gota = new Texture(Gdx.files.internal("drop.png"));
-         Texture gotaMala = new Texture(Gdx.files.internal("dropBad.png"));
-         
-         Sound dropSound = Gdx.audio.newSound(Gdx.files.internal("drop.wav"));
-        
-	     Music rainMusic = Gdx.audio.newMusic(Gdx.files.internal("rain.mp3"));
-         lluvia = new Lluvia(gota, gotaMala, dropSound, rainMusic);
-	      
-	      // camera
-	      camera = new OrthographicCamera();
-	      camera.setToOrtho(false, 800, 480);
-	      batch = new SpriteBatch();
-	      // creacion del tarro
-	      tarro.crear();
-	      
-	      // creacion de la lluvia
-	      lluvia.crear();
-	}
+        this.level = 1; // Initial level
+        this.initialSpeed = 300.0f; // Initial speed
 
-	@Override
-	public void render(float delta) {
-		//limpia la pantalla con color azul obscuro.
-		ScreenUtils.clear(0, 0, 0.2f, 1);
-		//actualizar matrices de la cámara
-		camera.update();
-		//actualizar 
-		batch.setProjectionMatrix(camera.combined);
-		batch.begin();
-		//dibujar textos
-		font.draw(batch, "Gotas totales: " + tarro.getPuntos(), 5, 475);
-		font.draw(batch, "Vidas : " + tarro.getVidas(), 670, 475);
-		font.draw(batch, "HighScore : " + game.getHigherScore(), camera.viewportWidth/2-50, 475);
-		
-		if (!tarro.estaHerido()) {
-			// movimiento del tarro desde teclado
-	        tarro.actualizarMovimiento();        
-			// caida de la lluvia 
-	       if (!lluvia.actualizarMovimiento(tarro)) {
-	    	  //actualizar HigherScore
-	    	  if (game.getHigherScore()<tarro.getPuntos())
-	    		  game.setHigherScore(tarro.getPuntos());  
-	    	  //ir a la ventana de finde juego y destruir la actual
-	    	  game.setScreen(new GameOverScreen(game));
-	    	  dispose();
-	       }
-		}
-		
-		tarro.dibujar(batch);
-		lluvia.actualizarDibujoLluvia(batch);
-		
-		batch.end();
-	}
+        // Load the images for the droplet and the sumo, 64x64 pixels each
+        Sound hurtSound = Gdx.audio.newSound(Gdx.files.internal("hurt.ogg"));
+        sumo = new Sumo(new Texture(Gdx.files.internal("sumo.png")), hurtSound);
 
-	@Override
-	public void resize(int width, int height) {
-	}
+        // Load the drop sound effect and the rain background "music"
+        Texture sushi1 = new Texture(Gdx.files.internal("sushi1.png"));
+        Texture sushi2 = new Texture(Gdx.files.internal("sushi2.png"));
+        Texture sushi3 = new Texture(Gdx.files.internal("sushi3.png"));
+        Texture poop = new Texture(Gdx.files.internal("poop.png"));
+        Sound dropSound = Gdx.audio.newSound(Gdx.files.internal("drop.wav"));
+        Music rainMusic = Gdx.audio.newMusic(Gdx.files.internal("rain.mp3"));
 
-	@Override
-	public void show() {
-	  // continuar con sonido de lluvia
-	  lluvia.continuar();
-	}
+        // Initialize Lluvia with initial speed
+        lluvia = new Lluvia(sushi1, sushi2, sushi3, poop, dropSound, rainMusic, initialSpeed);
 
-	@Override
-	public void hide() {
+        // Camera
+        camera = new OrthographicCamera();
+        camera.setToOrtho(false, 800, 480);
 
-	}
+        // Creacion del sumo
+        sumo.crear();
 
-	@Override
-	public void pause() {
-		lluvia.pausar();
-		game.setScreen(new PausaScreen(game, this)); 
-	}
+        // Creacion de la lluvia
+        lluvia.crear();
+    }
 
-	@Override
-	public void resume() {
+    @Override
+    public void render(float delta) {
+        // Limpia la pantalla con color azul obscuro.
+        ScreenUtils.clear(0, 0, 0.2f, 1);
 
-	}
+        // Actualizar matrices de la cámara
+        camera.update();
 
-	@Override
-	public void dispose() {
-      tarro.destruir();
-      lluvia.destruir();
+        // Actualizar
+        batch.setProjectionMatrix(camera.combined);
+        batch.begin();
 
-	}
+        // Dibujar textos
+        font.draw(batch, "Gotas totales: " + sumo.getPuntos(), 5, 475);
+        font.draw(batch, "Vidas : " + sumo.getVidas(), 670, 475);
+        font.draw(batch, "HighScore : " + game.getHigherScore(), camera.viewportWidth / 2 - 50, 475);
+        font.draw(batch, "Nivel : " + level, camera.viewportWidth / 2 - 50, 450);
 
+        if (!sumo.estaHerido()) {
+            // Movimiento del sumo desde teclado
+            sumo.actualizarMovimiento();
+
+            // Caida de la lluvia
+            if (!lluvia.actualizarMovimiento(sumo)) {
+                // Actualizar HigherScore
+                if (game.getHigherScore() < sumo.getPuntos())
+                    game.setHigherScore(sumo.getPuntos());
+
+                // Ir a la ventana de finde juego y destruir la actual
+                game.setScreen(new GameOverScreen(game));
+                dispose();
+            }
+        }
+
+        sumo.dibujar(batch);
+        lluvia.actualizarDibujoSushi(batch);
+
+        batch.end();
+
+        // Check level progression
+        checkLevelProgression();
+    }
+
+    private void checkLevelProgression() {
+        int points = sumo.getPuntos();
+
+        // Example of level progression: increase drops per interval every 10 points
+        if (points >= level * 10) {
+            level++;
+            float newSpeed = initialSpeed + (level - 1) * 50.0f; // Increase speed by 50 units per level
+            int newDropsPerInterval = level; // Increase number of drops per interval
+            lluvia.setSpeed(newSpeed);
+            lluvia.setDropsPerInterval(newDropsPerInterval);
+        }
+    }
+
+    @Override
+    public void resize(int width, int height) {}
+
+    @Override
+    public void show() {
+        // Continuar con sonido de lluvia
+        lluvia.continuar();
+    }
+
+    @Override
+    public void hide() {}
+
+    @Override
+    public void pause() {
+        lluvia.pausar();
+        game.setScreen(new PausaScreen(game, this));
+    }
+
+    @Override
+    public void resume() {}
+
+    @Override
+    public void dispose() {
+        sumo.destruir();
+        lluvia.destruir();
+    }
 }

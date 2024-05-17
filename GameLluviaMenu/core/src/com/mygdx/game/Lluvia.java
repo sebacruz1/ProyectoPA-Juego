@@ -11,96 +11,134 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.TimeUtils;
 
 public class Lluvia {
-	private Array<Rectangle> rainDropsPos;
-	private Array<Integer> rainDropsType;
+    private Array<Rectangle> sushiDropsPos;
+    private Array<Integer> sushiDropsType;
     private long lastDropTime;
-    private Texture gotaBuena;
-    private Texture gotaMala;
+    private Texture sushi1;
+    private Texture sushi2;
+    private Texture sushi3;
+    private Texture poop;
     private Sound dropSound;
     private Music rainMusic;
-	   
-	public Lluvia(Texture gotaBuena, Texture gotaMala, Sound ss, Music mm) {
-		rainMusic = mm;
-		dropSound = ss;
-		this.gotaBuena = gotaBuena;
-		this.gotaMala = gotaMala;
-	}
-	
-	public void crear() {
-		rainDropsPos = new Array<Rectangle>();
-		rainDropsType = new Array<Integer>();
-		crearGotaDeLluvia();
-	      // start the playback of the background music immediately
-	      rainMusic.setLooping(true);
-	      rainMusic.play();
-	}
-	
-	private void crearGotaDeLluvia() {
-	      Rectangle raindrop = new Rectangle();
-	      raindrop.x = MathUtils.random(0, 800-64);
-	      raindrop.y = 480;
-	      raindrop.width = 64;
-	      raindrop.height = 64;
-	      rainDropsPos.add(raindrop);
-	      // ver el tipo de gota
-	      if (MathUtils.random(1,10)<5)	    	  
-	         rainDropsType.add(1);
-	      else 
-	    	 rainDropsType.add(2);
-	      lastDropTime = TimeUtils.nanoTime();
-	   }
-	
-   public boolean actualizarMovimiento(Tarro tarro) { 
-	   // generar gotas de lluvia 
-	   if(TimeUtils.nanoTime() - lastDropTime > 100000000) crearGotaDeLluvia();
-	  
-	   
-	   // revisar si las gotas cayeron al suelo o chocaron con el tarro
-	   for (int i=0; i < rainDropsPos.size; i++ ) {
-		  Rectangle raindrop = rainDropsPos.get(i);
-	      raindrop.y -= 300 * Gdx.graphics.getDeltaTime();
-	      //cae al suelo y se elimina
-	      if(raindrop.y + 64 < 0) {
-	    	  rainDropsPos.removeIndex(i); 
-	    	  rainDropsType.removeIndex(i);
-	      }
-	      if(raindrop.overlaps(tarro.getArea())) { //la gota choca con el tarro
-	    	if(rainDropsType.get(i)==1) { // gota dañina
-	    	  tarro.dañar();
-	    	  if (tarro.getVidas()<=0)
-	    		 return false; // si se queda sin vidas retorna falso /game over
-	    	  rainDropsPos.removeIndex(i);
-	          rainDropsType.removeIndex(i);
-	      	}else { // gota a recolectar
-	    	  tarro.sumarPuntos(10);
-	          dropSound.play();
-	          rainDropsPos.removeIndex(i);
-	          rainDropsType.removeIndex(i);
-	      	}
-	      }
-	   } 
-	  return true; 
-   }
-   
-   public void actualizarDibujoLluvia(SpriteBatch batch) { 
-	   
-	  for (int i=0; i < rainDropsPos.size; i++ ) {
-		  Rectangle raindrop = rainDropsPos.get(i);
-		  if(rainDropsType.get(i)==1) // gota dañina
-	         batch.draw(gotaMala, raindrop.x, raindrop.y); 
-		  else
-			 batch.draw(gotaBuena, raindrop.x, raindrop.y); 
-	   }
-   }
-   public void destruir() {
-      dropSound.dispose();
-      rainMusic.dispose();
-   }
-   public void pausar() {
-	  rainMusic.stop();
-   }
-   public void continuar() {
-	  rainMusic.play();
-   }
-   
+    private float speed; // Variable to control the speed of the drops
+    private int dropsPerInterval; // Variable to control the number of drops per interval
+
+    public Lluvia(Texture sushi1, Texture sushi2, Texture sushi3, Texture poop, Sound ss, Music mm, float initialSpeed) {
+        rainMusic = mm;
+        dropSound = ss;
+        this.sushi1 = sushi1;
+        this.sushi2 = sushi2;
+        this.sushi3 = sushi3;
+        this.poop = poop;
+        this.speed = initialSpeed; // Initialize the speed
+        this.dropsPerInterval = 5; // Initialize the number of drops per interval
+    }
+
+    public void crear() {
+        sushiDropsPos = new Array<>();
+        sushiDropsType = new Array<>();
+        crearGotaDeSushi();
+        rainMusic.setLooping(true);
+        rainMusic.play();
+    }
+
+    private void crearGotaDeSushi() {
+        for (int i = 0; i < dropsPerInterval; i++) {
+            Rectangle sushiDrop = new Rectangle();
+            sushiDrop.x = MathUtils.random(0, 800 - 64); // Random x position
+            sushiDrop.y = 480;
+            sushiDrop.width = 64;
+            sushiDrop.height = 64;
+            sushiDropsPos.add(sushiDrop);
+
+            // Determine the type of sushi drop: 1 for harmful (poop), 2, 3, or 4 for collectible sushi
+            int type;
+            if (MathUtils.random(1, 10) < 5) {
+                type = 1; // harmful
+            } else {
+                type = MathUtils.random(2, 4); // collectible sushi
+            }
+            sushiDropsType.add(type);
+        }
+        lastDropTime = TimeUtils.nanoTime();
+    }
+
+    public boolean actualizarMovimiento(Sumo sumo) {
+        if (TimeUtils.nanoTime() - lastDropTime > 1000000000) {
+            crearGotaDeSushi();
+        }
+
+        for (int i = 0; i < sushiDropsPos.size; i++) {
+            Rectangle sushiDrop = sushiDropsPos.get(i);
+            sushiDrop.y -= speed * Gdx.graphics.getDeltaTime(); // Adjust speed here
+
+            if (sushiDrop.y + 64 < 0) {
+                sushiDropsPos.removeIndex(i);
+                sushiDropsType.removeIndex(i);
+            } else if (sushiDrop.overlaps(sumo.getArea())) {
+                int type = sushiDropsType.get(i);
+                if (type == 1) { // harmful drop
+                    sumo.dañar();
+                    if (sumo.getVidas() <= 0) {
+                        return false; // game over
+                    }
+                } else { // collectible sushi
+                    sumo.sumarPuntos(1);
+                    dropSound.play();
+                }
+                sushiDropsPos.removeIndex(i);
+                sushiDropsType.removeIndex(i);
+            }
+        }
+        return true;
+    }
+
+    public void actualizarDibujoSushi(SpriteBatch batch) {
+        for (int i = 0; i < sushiDropsPos.size; i++) {
+            Rectangle sushiDrop = sushiDropsPos.get(i);
+            int type = sushiDropsType.get(i);
+
+            switch (type) {
+                case 1:
+                    batch.draw(poop, sushiDrop.x, sushiDrop.y);
+                    break;
+                case 2:
+                    batch.draw(sushi1, sushiDrop.x, sushiDrop.y);
+                    break;
+                case 3:
+                    batch.draw(sushi2, sushiDrop.x, sushiDrop.y);
+                    break;
+                case 4:
+                    batch.draw(sushi3, sushiDrop.x, sushiDrop.y);
+                    break;
+            }
+        }
+    }
+
+    public void destruir() {
+        dropSound.dispose();
+        rainMusic.dispose();
+        sushi1.dispose();
+        sushi2.dispose();
+        sushi3.dispose();
+        poop.dispose();
+    }
+
+    public void pausar() {
+        rainMusic.stop();
+    }
+
+    public void continuar() {
+        rainMusic.play();
+    }
+
+    // Method to set the speed
+    public void setSpeed(float newSpeed) {
+        this.speed = newSpeed;
+    }
+
+    // Method to set the number of drops per interval
+    public void setDropsPerInterval(int newDropsPerInterval) {
+        this.dropsPerInterval = newDropsPerInterval;
+    }
 }

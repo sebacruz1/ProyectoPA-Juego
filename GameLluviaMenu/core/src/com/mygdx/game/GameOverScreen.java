@@ -18,7 +18,7 @@ public class GameOverScreen implements Screen {
         this.batch = game.getBatch();
         this.font = game.getFont();
 		camera = new OrthographicCamera();
-		camera.setToOrtho(false, 800, 480);
+		camera.setToOrtho(false, 1920, 1080);
 	}
 
 	@Override

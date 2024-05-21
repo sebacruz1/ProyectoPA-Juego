@@ -15,7 +15,7 @@ public class Sumo {
     private Sound sonidoHerido;
     private int vidas = 3;
     private int puntos = 0;
-    private int velx = 400;
+    private int velx = 600;
     private boolean herido = false;
     private int tiempoHeridoMax = 50;
     private int tiempoHerido;
@@ -45,10 +45,10 @@ public class Sumo {
 
     public void crear() {
         sumo = new Rectangle();
-        sumo.x = 800 / 2 - 64 / 2;
+        sumo.x = 1920 / 2 - 64 / 2;
         sumo.y = 20;
-        sumo.width = 64;
-        sumo.height = 64;
+        sumo.width = 128;
+        sumo.height = 128;
     }
 
     public void danar() {
@@ -85,7 +85,7 @@ public class Sumo {
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) sumo.x += velx * Gdx.graphics.getDeltaTime();
         // que no se salga de los bordes izq y der
         if (sumo.x < 0) sumo.x = 0;
-        if (sumo.x > 800 - 64) sumo.x = 800 - 64;
+        if (sumo.x > 1920 - 64) sumo.x = 1920 - 64;
     }
 
 

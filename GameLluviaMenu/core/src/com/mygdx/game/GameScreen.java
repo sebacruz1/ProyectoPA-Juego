@@ -25,7 +25,7 @@ public class GameScreen implements Screen {
         this.batch = game.getBatch();
         this.font = game.getFont();
         this.level = 1; // Initial level
-        this.initialSpeed = 300.0f; // Initial speed
+        this.initialSpeed = 500.0f; // Initial speed
 
         // Load the images for the droplet and the sumo, 64x64 pixels each
         Sound hurtSound = Gdx.audio.newSound(Gdx.files.internal("hurt.ogg"));
@@ -44,7 +44,7 @@ public class GameScreen implements Screen {
 
         // Camera
         camera = new OrthographicCamera();
-        camera.setToOrtho(false, 800, 480);
+        camera.setToOrtho(false, 1920, 1080);
 
         // Creacion del sumo
         sumo.crear();
@@ -66,10 +66,11 @@ public class GameScreen implements Screen {
         batch.begin();
 
         // Dibujar textos
-        font.draw(batch, "Gotas totales: " + sumo.getPuntos(), 5, 475);
-        font.draw(batch, "Vidas : " + sumo.getVidas(), 670, 475);
-        font.draw(batch, "HighScore : " + game.getHigherScore(), camera.viewportWidth / 2 - 50, 475);
-        font.draw(batch, "Nivel : " + level, camera.viewportWidth / 2 - 50, 450);
+        font.draw(batch, "Gotas totales: " + sumo.getPuntos(), 5, 1050);
+        font.draw(batch, "Vidas : " + sumo.getVidas(), 670, 1050);
+        font.draw(batch, "HighScore : " + game.getHigherScore(), 5, 1000);
+        font.draw(batch, "Nivel : " + level, camera.viewportWidth / 2 - 50, 1050);
+        font.draw(batch, "Speed : " +  (initialSpeed + (level - 1) * 100.0f), 1600, 1050 );
 
         if (!sumo.estaHerido()) {
             // Movimiento del sumo desde teclado
@@ -102,10 +103,10 @@ public class GameScreen implements Screen {
         // Example of level progression: increase drops per interval every 10 points
         if (points >= level * 10) {
             level++;
-            float newSpeed = initialSpeed + (level - 1) * 50.0f; // Increase speed by 50 units per level
+            float newSpeed = initialSpeed + (level - 1) * 100.0f; // Increase speed by 50 units per level
             int newDropsPerInterval = level; // Increase number of drops per interval
             lluvia.setSpeed(newSpeed);
-            lluvia.setDropsPerInterval(newDropsPerInterval);
+
         }
     }
 

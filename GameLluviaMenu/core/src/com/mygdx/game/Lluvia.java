@@ -47,10 +47,10 @@ public class Lluvia {
     private void crearGotaDeSushi() {
 
         Rectangle sushiDrop = new Rectangle();
-        sushiDrop.x = MathUtils.random(0, 800 - 64); // Random x position
-        sushiDrop.y = 480;
-        sushiDrop.width = 64;
-        sushiDrop.height = 64;
+        sushiDrop.x = MathUtils.random(0, 1920 - 64); // Random x position
+        sushiDrop.y = 1080;
+        sushiDrop.width = 125;
+        sushiDrop.height = 125;
         sushiDropsPos.add(sushiDrop);
 
         // Determine the type of sushi drop: 1 for harmful (poop), 2, 3, or 4 for collectible sushi
@@ -58,7 +58,7 @@ public class Lluvia {
         if (MathUtils.random(1, 100) <= 35 * level) {
             type = 1; // harmful
         } else {
-            type = MathUtils.random(2, 4); // collectible sushi
+           type = MathUtils.random(2, 4); // collectible sushi
         }
         sushiDropsType.add(type);
 
@@ -98,24 +98,17 @@ public class Lluvia {
     }
 
     public void actualizarDibujoSushi(SpriteBatch batch) {
+        int tipoSushi = 1;
         for (int i = 0; i < sushiDropsPos.size; i++) {
             Rectangle sushiDrop = sushiDropsPos.get(i);
-            int type = sushiDropsType.get(i);
 
-            switch (type) {
-                case 1:
-                    batch.draw(poop, sushiDrop.x, sushiDrop.y);
-                    break;
-                case 2:
-                    batch.draw(sushi1, sushiDrop.x, sushiDrop.y);
-                    break;
-                case 3:
-                    batch.draw(sushi2, sushiDrop.x, sushiDrop.y);
-                    break;
-                case 4:
-                    batch.draw(sushi3, sushiDrop.x, sushiDrop.y);
-                    break;
+            if (sushiDropsType.get(i) == 1) {
+                batch.draw(poop, sushiDrop.x, sushiDrop.y);
+            } else {
+                batch.draw(texturaSushi(sushiDropsType.get(i)), sushiDrop.x, sushiDrop.y);
+
             }
+
         }
     }
 
@@ -128,6 +121,17 @@ public class Lluvia {
         poop.dispose();
     }
 
+    public Texture texturaSushi(int tipoSushi) {
+        switch (tipoSushi) {
+            case 2:
+                return sushi2;
+            case 3:
+                return sushi3;
+            default:
+                return sushi1;
+
+        }
+    }
     public void pausar() {
         rainMusic.stop();
     }
@@ -139,10 +143,5 @@ public class Lluvia {
     // Method to set the speed
     public void setSpeed(float newSpeed) {
         this.speed = newSpeed;
-    }
-
-    // Method to set the number of drops per interval
-    public void setDropsPerInterval(int newDropsPerInterval) {
-        this.dropsPerInterval = newDropsPerInterval;
     }
 }

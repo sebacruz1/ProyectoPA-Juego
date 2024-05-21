@@ -22,8 +22,9 @@ public class Lluvia {
     private Music rainMusic;
     private float speed; // Variable to control the speed of the drops
     private int dropsPerInterval; // Variable to control the number of drops per interval
+    private int level;
 
-    public Lluvia(Texture sushi1, Texture sushi2, Texture sushi3, Texture poop, Sound ss, Music mm, float initialSpeed) {
+    public Lluvia(Texture sushi1, Texture sushi2, Texture sushi3, Texture poop, Sound ss, Music mm, float initialSpeed, int level) {
         rainMusic = mm;
         dropSound = ss;
         this.sushi1 = sushi1;
@@ -32,39 +33,41 @@ public class Lluvia {
         this.poop = poop;
         this.speed = initialSpeed; // Initialize the speed
         this.dropsPerInterval = 5; // Initialize the number of drops per interval
+        this.level = level;
     }
 
     public void crear() {
-        sushiDropsPos = new Array<>();
-        sushiDropsType = new Array<>();
+        sushiDropsPos = new Array<Rectangle>();
+        sushiDropsType = new Array<Integer>();
         crearGotaDeSushi();
         rainMusic.setLooping(true);
         rainMusic.play();
     }
 
     private void crearGotaDeSushi() {
-        for (int i = 0; i < dropsPerInterval; i++) {
-            Rectangle sushiDrop = new Rectangle();
-            sushiDrop.x = MathUtils.random(0, 800 - 64); // Random x position
-            sushiDrop.y = 480;
-            sushiDrop.width = 64;
-            sushiDrop.height = 64;
-            sushiDropsPos.add(sushiDrop);
 
-            // Determine the type of sushi drop: 1 for harmful (poop), 2, 3, or 4 for collectible sushi
-            int type;
-            if (MathUtils.random(1, 10) < 5) {
-                type = 1; // harmful
-            } else {
-                type = MathUtils.random(2, 4); // collectible sushi
-            }
-            sushiDropsType.add(type);
+        Rectangle sushiDrop = new Rectangle();
+        sushiDrop.x = MathUtils.random(0, 800 - 64); // Random x position
+        sushiDrop.y = 480;
+        sushiDrop.width = 64;
+        sushiDrop.height = 64;
+        sushiDropsPos.add(sushiDrop);
+
+        // Determine the type of sushi drop: 1 for harmful (poop), 2, 3, or 4 for collectible sushi
+        int type;
+        if (MathUtils.random(1, 100) <= 35 * level) {
+            type = 1; // harmful
+        } else {
+            type = MathUtils.random(2, 4); // collectible sushi
         }
+        sushiDropsType.add(type);
+
+
         lastDropTime = TimeUtils.nanoTime();
     }
 
     public boolean actualizarMovimiento(Sumo sumo) {
-        if (TimeUtils.nanoTime() - lastDropTime > 1000000000) {
+        if (TimeUtils.nanoTime() - lastDropTime > 99500000) {
             crearGotaDeSushi();
         }
 
@@ -75,10 +78,11 @@ public class Lluvia {
             if (sushiDrop.y + 64 < 0) {
                 sushiDropsPos.removeIndex(i);
                 sushiDropsType.removeIndex(i);
-            } else if (sushiDrop.overlaps(sumo.getArea())) {
+            }
+            if (sushiDrop.overlaps(sumo.getArea())) {
                 int type = sushiDropsType.get(i);
                 if (type == 1) { // harmful drop
-                    sumo.dañar();
+                    sumo.danar();
                     if (sumo.getVidas() <= 0) {
                         return false; // game over
                     }

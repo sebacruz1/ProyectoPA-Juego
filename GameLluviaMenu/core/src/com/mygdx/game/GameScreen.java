@@ -40,7 +40,7 @@ public class GameScreen implements Screen {
         Music rainMusic = Gdx.audio.newMusic(Gdx.files.internal("rain.mp3"));
 
         // Initialize Lluvia with initial speed
-        lluvia = new Lluvia(sushi1, sushi2, sushi3, poop, dropSound, rainMusic, initialSpeed);
+        lluvia = new Lluvia(sushi1, sushi2, sushi3, poop, dropSound, rainMusic, initialSpeed, level);
 
         // Camera
         camera = new OrthographicCamera();

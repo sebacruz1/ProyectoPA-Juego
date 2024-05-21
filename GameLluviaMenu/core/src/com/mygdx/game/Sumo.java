@@ -51,7 +51,7 @@ public class Sumo {
         sumo.height = 64;
     }
 
-    public void dañar() {
+    public void danar() {
         vidas--;
         herido = true;
         tiempoHerido = tiempoHeridoMax;
@@ -79,6 +79,8 @@ public class Sumo {
 			      sumo.x = touchPos.x - 64 / 2;
 			}*/
         //movimiento desde teclado
+
+
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) sumo.x -= velx * Gdx.graphics.getDeltaTime();
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) sumo.x += velx * Gdx.graphics.getDeltaTime();
         // que no se salga de los bordes izq y der

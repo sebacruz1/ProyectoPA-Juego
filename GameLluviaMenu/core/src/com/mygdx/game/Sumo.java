@@ -42,6 +42,10 @@ public class Sumo {
         puntos += pp;
     }
 
+    public void agregarVida() {
+        vidas++;
+    }
+
 
     public void crear() {
         sumo = new Rectangle();

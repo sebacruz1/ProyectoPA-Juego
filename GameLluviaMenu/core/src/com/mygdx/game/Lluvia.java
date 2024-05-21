@@ -18,19 +18,21 @@ public class Lluvia {
     private Texture sushi2;
     private Texture sushi3;
     private Texture poop;
+    private Texture star;
     private Sound dropSound;
     private Music rainMusic;
     private float speed; // Variable to control the speed of the drops
     private int dropsPerInterval; // Variable to control the number of drops per interval
     private int level;
 
-    public Lluvia(Texture sushi1, Texture sushi2, Texture sushi3, Texture poop, Sound ss, Music mm, float initialSpeed, int level) {
+    public Lluvia(Texture sushi1, Texture sushi2, Texture sushi3, Texture poop, Texture star, Sound ss, Music mm, float initialSpeed, int level) {
         rainMusic = mm;
         dropSound = ss;
         this.sushi1 = sushi1;
         this.sushi2 = sushi2;
         this.sushi3 = sushi3;
         this.poop = poop;
+        this.star = star;
         this.speed = initialSpeed; // Initialize the speed
         this.dropsPerInterval = 5; // Initialize the number of drops per interval
         this.level = level;
@@ -55,10 +57,13 @@ public class Lluvia {
 
         // Determine the type of sushi drop: 1 for harmful (poop), 2, 3, or 4 for collectible sushi
         int type;
-        if (MathUtils.random(1, 100) <= 35 * level) {
+        int number = MathUtils.random(1, 100);
+        if (number <= 35 * level) {
             type = 1; // harmful
+        } else if (number == 55) {
+            type = 55;
         } else {
-           type = MathUtils.random(2, 4); // collectible sushi
+            type = MathUtils.random(2, 4); // collectible sushi
         }
         sushiDropsType.add(type);
 
@@ -86,7 +91,11 @@ public class Lluvia {
                     if (sumo.getVidas() <= 0) {
                         return false; // game over
                     }
-                } else { // collectible sushi
+                } else if (type == 55) {
+                    sumo.agregarVida();
+
+                }
+                else { // collectible sushi
                     sumo.sumarPuntos(1);
                     dropSound.play();
                 }
@@ -104,6 +113,8 @@ public class Lluvia {
 
             if (sushiDropsType.get(i) == 1) {
                 batch.draw(poop, sushiDrop.x, sushiDrop.y);
+            } else if (sushiDropsType.get(i) == 55) {
+                batch.draw(star, sushiDrop.x, sushiDrop.y);
             } else {
                 batch.draw(texturaSushi(sushiDropsType.get(i)), sushiDrop.x, sushiDrop.y);
 
@@ -132,6 +143,7 @@ public class Lluvia {
 
         }
     }
+
     public void pausar() {
         rainMusic.stop();
     }

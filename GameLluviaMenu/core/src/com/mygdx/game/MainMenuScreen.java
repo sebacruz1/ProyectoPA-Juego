@@ -57,6 +57,9 @@ public class MainMenuScreen implements Screen {
 
 	@Override
 	public void pause() {
+		//PausaScreen pausa = new PausaScreen(game, ());
+		//pausa.pause();
+
 		// TODO Auto-generated method stub
 		
 	}

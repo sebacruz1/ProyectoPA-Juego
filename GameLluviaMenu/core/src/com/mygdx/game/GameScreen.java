@@ -36,12 +36,12 @@ public class GameScreen implements Screen {
         Texture sushi2 = new Texture(Gdx.files.internal("sushi2.png"));
         Texture sushi3 = new Texture(Gdx.files.internal("sushi3.png"));
         Texture poop = new Texture(Gdx.files.internal("poop.png"));
-        Texture star = new Texture(Gdx.files.internal("star.png"));
+        Texture heart = new Texture(Gdx.files.internal("heart.png"));
         Sound dropSound = Gdx.audio.newSound(Gdx.files.internal("drop.wav"));
         Music rainMusic = Gdx.audio.newMusic(Gdx.files.internal("rain.mp3"));
 
         // Initialize Lluvia with initial speed
-        lluvia = new Lluvia(sushi1, sushi2, sushi3, poop, star, dropSound, rainMusic, initialSpeed, level);
+        lluvia = new Lluvia(sushi1, sushi2, sushi3, poop, heart, dropSound, rainMusic, initialSpeed, level);
 
         // Camera
         camera = new OrthographicCamera();

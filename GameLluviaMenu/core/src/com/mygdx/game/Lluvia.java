@@ -14,27 +14,25 @@ public class Lluvia {
     private Array<Rectangle> sushiDropsPos;
     private Array<Integer> sushiDropsType;
     private long lastDropTime;
-    private Texture sushi1;
-    private Texture sushi2;
-    private Texture sushi3;
-    private Texture poop;
-    private Texture star;
-    private Sound dropSound;
-    private Music rainMusic;
-    private float speed; // Variable to control the speed of the drops
-    private int dropsPerInterval; // Variable to control the number of drops per interval
+    private final Texture sushi1;
+    private final Texture sushi2;
+    private final Texture sushi3;
+    private final Texture poop;
+    private final Texture heart;
+    private final Sound dropSound;
+    private final Music rainMusic;
+    private float speed;
     private int level;
 
-    public Lluvia(Texture sushi1, Texture sushi2, Texture sushi3, Texture poop, Texture star, Sound ss, Music mm, float initialSpeed, int level) {
+    public Lluvia(Texture sushi1, Texture sushi2, Texture sushi3, Texture poop, Texture heart, Sound ss, Music mm, float initialSpeed, int level) {
         rainMusic = mm;
         dropSound = ss;
         this.sushi1 = sushi1;
         this.sushi2 = sushi2;
         this.sushi3 = sushi3;
         this.poop = poop;
-        this.star = star;
+        this.heart = heart;
         this.speed = initialSpeed; // Initialize the speed
-        this.dropsPerInterval = 5; // Initialize the number of drops per interval
         this.level = level;
     }
 
@@ -114,7 +112,7 @@ public class Lluvia {
             if (sushiDropsType.get(i) == 1) {
                 batch.draw(poop, sushiDrop.x, sushiDrop.y);
             } else if (sushiDropsType.get(i) == 55) {
-                batch.draw(star, sushiDrop.x, sushiDrop.y);
+                batch.draw(heart, sushiDrop.x, sushiDrop.y);
             } else {
                 batch.draw(texturaSushi(sushiDropsType.get(i)), sushiDrop.x, sushiDrop.y);
 

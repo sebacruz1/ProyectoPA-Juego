@@ -24,9 +24,9 @@ public class Lluvia {
     private float speed;
     private int level;
 
-    public Lluvia(Texture sushi1, Texture sushi2, Texture sushi3, Texture poop, Texture heart, Sound ss, Music mm, float initialSpeed, int level) {
-        rainMusic = mm;
-        dropSound = ss;
+    public Lluvia(Texture sushi1, Texture sushi2, Texture sushi3, Texture poop, Texture heart, Sound drop, Music rain, float initialSpeed, int level) {
+        rainMusic = rain;
+        dropSound = drop;
         this.sushi1 = sushi1;
         this.sushi2 = sushi2;
         this.sushi3 = sushi3;

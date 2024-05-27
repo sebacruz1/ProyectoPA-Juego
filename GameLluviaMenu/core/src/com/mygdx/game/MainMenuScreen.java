@@ -6,24 +6,39 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.audio.Music;
 
-
-public class MainMenuScreen implements Screen {
+public class MainMenuScreen implements Screen, GameState {
 
 	final GameLluviaMenu game;
 	private SpriteBatch batch;
 	private BitmapFont font;
 	private OrthographicCamera camera;
-
+        private Music backgroundMusic;
+        
 	public MainMenuScreen(final GameLluviaMenu game) {
 		this.game = game;
-        this.batch = game.getBatch();
-        this.font = game.getFont();
+                this.batch = game.getBatch();
+                this.font = game.getFont();
 		camera = new OrthographicCamera();
 		camera.setToOrtho(false, 1920, 1080);
+                
+                backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("rain.mp3"));
 	}
-
+        
+        @Override
+        public void start() {
+        // Código para iniciar el menú principal
+            backgroundMusic.setLooping(true);
+            backgroundMusic.play();
+        }
+        @Override
+        public void end() {
+        // Código para cerrar el menú principal
+            backgroundMusic.stop();
+        }
 	@Override
+        
 	public void render(float delta) {
 		ScreenUtils.clear(0, 0, 0.2f, 1);
 
@@ -78,6 +93,7 @@ public class MainMenuScreen implements Screen {
 
 	@Override
 	public void dispose() {
+            backgroundMusic.dispose();
 		// TODO Auto-generated method stub
 		
 	}

@@ -2,29 +2,19 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
 
-public class GameScreen implements Screen, GameState {
-    final GameLluviaMenu game;
-    private OrthographicCamera camera;
-    private SpriteBatch batch;
-    private BitmapFont font;
+public class GameScreen extends AbstractScreen implements GameState {
     private Sumo sumo;
     private Lluvia lluvia;
     private int level;
     private float initialSpeed;
 
     public GameScreen(final GameLluviaMenu game) {
-        this.game = game;
-        this.batch = game.getBatch();
-        this.font = game.getFont();
+        super(game);
         this.level = 1; // Initial level
         this.initialSpeed = 500.0f; // Initial speed
 
@@ -43,10 +33,6 @@ public class GameScreen implements Screen, GameState {
 
         // Initialize Lluvia with initial speed
         lluvia = new Lluvia(sushi1, sushi2, sushi3, poop, heart, dropSound, rainMusic, initialSpeed, level);
-
-        // Camera
-        camera = new OrthographicCamera();
-        camera.setToOrtho(false, 1920, 1080);
 
         // Creacion del sumo
         sumo.crear();
@@ -102,31 +88,5 @@ public class GameScreen implements Screen, GameState {
             float newSpeed = initialSpeed + (level - 1) * 100.0f;
             lluvia.setSpeed(newSpeed);
         }
-    }
-
-    @Override
-    public void resize(int width, int height) {}
-
-    @Override
-    public void show() {
-        lluvia.continuar();
-    }
-
-    @Override
-    public void hide() {}
-
-    @Override
-    public void pause() {
-        lluvia.pausar();
-        game.setScreen(new PausaScreen(game, this));
-    }
-
-    @Override
-    public void resume() {}
-
-    @Override
-    public void dispose() {
-        sumo.destruir();
-        lluvia.destruir();
     }
 }

@@ -1,3 +1,4 @@
+// GameScreen.java
 package com.mygdx.game;
 
 import com.badlogic.gdx.Gdx;
@@ -10,7 +11,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
 
-public class GameScreen implements Screen {
+public class GameScreen implements Screen, GameState {
     final GameLluviaMenu game;
     private OrthographicCamera camera;
     private SpriteBatch batch;
@@ -55,35 +56,34 @@ public class GameScreen implements Screen {
     }
 
     @Override
+    public void start() {
+        // Código para iniciar la pantalla de juego
+    }
+
+    @Override
+    public void end() {
+        // Código para terminar la pantalla de juego
+    }
+
+    @Override
     public void render(float delta) {
-        // Limpia la pantalla con color azul obscuro.
         ScreenUtils.clear(0, 0, 0.2f, 1);
-
-        // Actualizar matrices de la cámara
         camera.update();
-
-        // Actualizar
         batch.setProjectionMatrix(camera.combined);
-        batch.begin();
 
-        // Dibujar textos
+        batch.begin();
         font.draw(batch, "Gotas totales: " + sumo.getPuntos(), 5, 1050);
         font.draw(batch, "Vidas : " + sumo.getVidas(), 670, 1050);
         font.draw(batch, "HighScore : " + game.getHigherScore(), 5, 1000);
         font.draw(batch, "Nivel : " + level, camera.viewportWidth / 2 - 50, 1050);
-        font.draw(batch, "Speed : " +  (initialSpeed + (level - 1) * 100.0f), 1600, 1050 );
+        font.draw(batch, "Speed : " + (initialSpeed + (level - 1) * 100.0f), 1600, 1050);
 
         if (!sumo.estaHerido()) {
-            // Movimiento del sumo desde teclado
             sumo.actualizarMovimiento();
-
-            // Caida de la lluvia
             if (!lluvia.actualizarMovimiento(sumo)) {
-                // Actualizar HigherScore
-                if (game.getHigherScore() < sumo.getPuntos())
+                if (game.getHigherScore() < sumo.getPuntos()) {
                     game.setHigherScore(sumo.getPuntos());
-
-                // Ir a la ventana de finde juego y destruir la actual
+                }
                 game.setScreen(new GameOverScreen(game));
                 dispose();
             }
@@ -91,23 +91,16 @@ public class GameScreen implements Screen {
 
         sumo.dibujar(batch);
         lluvia.actualizarDibujoSushi(batch);
-
         batch.end();
-
-        // Check level progression
         checkLevelProgression();
     }
 
     private void checkLevelProgression() {
         int points = sumo.getPuntos();
-
-        // Example of level progression: increase drops per interval every 10 points
         if (points >= level * 10) {
             level++;
-            float newSpeed = initialSpeed + (level - 1) * 100.0f; // Increase speed by 50 units per level
-            int newDropsPerInterval = level; // Increase number of drops per interval
+            float newSpeed = initialSpeed + (level - 1) * 100.0f;
             lluvia.setSpeed(newSpeed);
-
         }
     }
 
@@ -116,7 +109,6 @@ public class GameScreen implements Screen {
 
     @Override
     public void show() {
-        // Continuar con sonido de lluvia
         lluvia.continuar();
     }
 

@@ -20,13 +20,15 @@ public class Lluvia {
     private final Texture poop;
     private final Texture heart;
     private final Sound dropSound;
+    private final Sound hurtFinal;
     private final Music rainMusic;
     private float speed;
     private int level;
 
-    public Lluvia(Texture sushi1, Texture sushi2, Texture sushi3, Texture poop, Texture heart, Sound drop, Music rain, float initialSpeed, int level) {
+    public Lluvia(Texture sushi1, Texture sushi2, Texture sushi3, Texture poop, Texture heart, Sound drop, Sound hurt, Music rain, float initialSpeed, int level) {
         rainMusic = rain;
         dropSound = drop;
+        hurtFinal = hurt;
         this.sushi1 = sushi1;
         this.sushi2 = sushi2;
         this.sushi3 = sushi3;
@@ -87,7 +89,10 @@ public class Lluvia {
                 if (type == 1) { // harmful drop
                     sumo.danar();
                     if (sumo.getVidas() <= 0) {
+                    	hurtFinal.play();
+                    	rainMusic.stop();
                         return false; // game over
+                      
                     }
                 } else if (type == 55) {
                     sumo.agregarVida();
@@ -123,7 +128,8 @@ public class Lluvia {
 
     public void destruir() {
         dropSound.dispose();
-        rainMusic.dispose();
+        hurtFinal.dispose();
+        rainMusic.stop();
         sushi1.dispose();
         sushi2.dispose();
         sushi3.dispose();

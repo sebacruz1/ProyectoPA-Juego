@@ -60,6 +60,7 @@ public class Sumo {
         this.vidas++;
     }
 
+
     public void crear() {
         sumo = new Rectangle();
         sumo.x = 1920 / 2 - 64 / 2;
@@ -87,9 +88,14 @@ public class Sumo {
         }
     }
 
-    public void actualizarMovimiento() {
+    public void actualizarMovimiento(GameLluviaMenu game) {
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) sumo.x -= velx * Gdx.graphics.getDeltaTime();
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) sumo.x += velx * Gdx.graphics.getDeltaTime();
+        if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
+        
+            PausaScreen pausaScreen = new PausaScreen(game);
+            game.setScreen(pausaScreen);
+        }
         // Asegurar que el sumo no salga de los bordes de la pantalla
         if (sumo.x < 0) sumo.x = 0;
         if (sumo.x > 1920 - 64) sumo.x = 1920 - 64;

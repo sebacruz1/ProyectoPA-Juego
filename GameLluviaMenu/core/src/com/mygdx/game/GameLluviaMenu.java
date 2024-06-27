@@ -8,10 +8,17 @@ public class GameLluviaMenu extends Game {
     private SpriteBatch batch;
     private BitmapFont font;
     private int higherScore;
+    private GameScreen gameScreen; // Referencia a la instancia actual de GameScreen
 
     public void create() {
         batch = new SpriteBatch();
         font = new BitmapFont(); // use libGDX's default Arial font
+
+        // Obtener las instancias Singleton
+        GameHandler gameHandler = GameHandler.getInstance();
+        ConfiguracionGlobal configuracionGlobal = ConfiguracionGlobal.getInstance();
+
+        gameScreen = new GameScreen(this); // Crear una instancia de GameScreen
         this.setScreen(new MainMenuScreen(this));
     }
 
@@ -38,5 +45,9 @@ public class GameLluviaMenu extends Game {
 
     public void setHigherScore(int higherScore) {
         this.higherScore = higherScore;
+    }
+
+    public GameScreen getGameScreen() {
+        return gameScreen; // Método para obtener la instancia actual de GameScreen
     }
 }

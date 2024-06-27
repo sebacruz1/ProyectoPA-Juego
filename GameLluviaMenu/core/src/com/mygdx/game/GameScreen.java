@@ -1,7 +1,7 @@
-// GameScreen.java
 package com.mygdx.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
@@ -10,21 +10,17 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
 
-
 public class GameScreen extends AbstractScreen implements GameState {
     private Sumo sumo;
     private Lluvia lluvia;
     private int level;
     private float initialSpeed;
-    private SpriteBatch batch;
     private Texture backgroundImage;
-    private OrthographicCamera camera;
 
     public GameScreen(final GameLluviaMenu game) {
         super(game);
         this.level = 1; // Initial level
         this.initialSpeed = 500.0f; // Initial speed
-        
 
         // Load the images for the droplet and the sumo, 64x64 pixels each
         Sound hurtSound = Gdx.audio.newSound(Gdx.files.internal("hurt.ogg"));
@@ -39,7 +35,6 @@ public class GameScreen extends AbstractScreen implements GameState {
         Sound dropSound = Gdx.audio.newSound(Gdx.files.internal("drop.wav"));
         Music rainMusic = Gdx.audio.newMusic(Gdx.files.internal("rain.mp3"));
         Sound hurtFinal = Gdx.audio.newSound(Gdx.files.internal("hurtFinal.mp3"));
-        
 
         // Initialize Lluvia with initial speed
         lluvia = new Lluvia(sushi1, sushi2, sushi3, poop, heart, dropSound, hurtFinal, rainMusic, initialSpeed, level);
@@ -49,6 +44,11 @@ public class GameScreen extends AbstractScreen implements GameState {
 
         // Creacion de la lluvia
         lluvia.crear();
+
+        // Inicialización de los recursos gráficos
+        backgroundImage = new Texture(Gdx.files.internal("background.png"));
+        
+        camera.setToOrtho(false, 1600, 960); // Configura esto al tamaño deseado de tu ventana
     }
 
     @Override
@@ -66,7 +66,7 @@ public class GameScreen extends AbstractScreen implements GameState {
         ScreenUtils.clear(0, 0, 0.2f, 1);
         camera.update();
         batch.setProjectionMatrix(camera.combined);
-        
+
         Gdx.gl.glClearColor(0, 0, 0, 1); // Limpia la pantalla con un color, opcional si el fondo cubre todo
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
@@ -81,9 +81,8 @@ public class GameScreen extends AbstractScreen implements GameState {
         font.draw(batch, "Nivel : " + level, Gdx.graphics.getWidth() / 2 - 50, 920); // Centrado horizontalmente en la parte superior
         font.draw(batch, "Speed : " + (initialSpeed + (level - 1) * 100.0f), 1400, 920); // Ajustado a la derecha
 
-
         if (!sumo.estaHerido()) {
-            sumo.actualizarMovimiento();
+            sumo.actualizarMovimiento(game);
             if (!lluvia.actualizarMovimiento(sumo)) {
                 if (game.getHigherScore() < sumo.getPuntos()) {
                     game.setHigherScore(sumo.getPuntos());
@@ -99,18 +98,21 @@ public class GameScreen extends AbstractScreen implements GameState {
         checkLevelProgression();
     }
 
+    @Override
     public void show() {
-        batch = new SpriteBatch();
-        backgroundImage = new Texture(Gdx.files.internal("background.png"));
-        camera = new OrthographicCamera();
-        camera.setToOrtho(false, 1600, 960); // Configura esto al tamaño deseado de tu ventana
+        // No necesitas inicializar aquí ya que se hace en el constructor
     }
-    
+
     @Override
     public void hide() {
+        // backgroundImage.dispose(); No liberar aquí para mantener el estado
+    }
+
+    @Override
+    public void dispose() {
         backgroundImage.dispose();
     }
-    
+
     private void checkLevelProgression() {
         int points = sumo.getPuntos();
         if (points >= level * 10) {

@@ -110,7 +110,7 @@ public class Lluvia {
     }
 
     public void actualizarDibujoSushi(SpriteBatch batch) {
-        int tipoSushi = 1;
+        
         for (int i = 0; i < sushiDropsPos.size; i++) {
             Rectangle sushiDrop = sushiDropsPos.get(i);
 

@@ -24,7 +24,12 @@ public class GameScreen extends AbstractScreen implements GameState {
 
         // Load the images for the droplet and the sumo, 64x64 pixels each
         Sound hurtSound = Gdx.audio.newSound(Gdx.files.internal("hurt.ogg"));
-        sumo = new Sumo(new Texture(Gdx.files.internal("sumo.png")), hurtSound);
+        sumo = new Sumo.SumoBuilder(new Texture(Gdx.files.internal("sumo.png")), hurtSound)
+                .vidas(3)
+                .puntos(0)
+                .velx(600)
+                .tiempoHeridoMax(50)
+                .build();
 
         // Load the drop sound effect and the rain background "music"
         Texture sushi1 = new Texture(Gdx.files.internal("sushi1.png"));
@@ -48,7 +53,7 @@ public class GameScreen extends AbstractScreen implements GameState {
         // Inicialización de los recursos gráficos
         backgroundImage = new Texture(Gdx.files.internal("background.png"));
         
-        camera.setToOrtho(false, 1600, 960); // Configura esto al tamaño deseado de tu ventana
+        camera.setToOrtho(false, 1920, 1080); // Configura esto al tamaño deseado de tu ventana
     }
 
     @Override
@@ -97,17 +102,7 @@ public class GameScreen extends AbstractScreen implements GameState {
         batch.end();
         checkLevelProgression();
     }
-
-    @Override
-    public void show() {
-        // No necesitas inicializar aquí ya que se hace en el constructor
-    }
-
-    @Override
-    public void hide() {
-        // backgroundImage.dispose(); No liberar aquí para mantener el estado
-    }
-
+   
     @Override
     public void dispose() {
         backgroundImage.dispose();
@@ -117,7 +112,7 @@ public class GameScreen extends AbstractScreen implements GameState {
         int points = sumo.getPuntos();
         if (points >= level * 10) {
             level++;
-            float newSpeed = initialSpeed + (level - 1) * 100.0f;
+            float newSpeed = initialSpeed += 100.0f;
             lluvia.setSpeed(newSpeed);
         }
     }

@@ -12,16 +12,23 @@ public class Sumo {
     private Rectangle sumo;
     private Texture sumoImage;
     private Sound sonidoHerido;
-    private int vidas = 3;
-    private int puntos = 0;
-    private int velx = 600;
-    private boolean herido = false;
-    private int tiempoHeridoMax = 50;
+    private int vidas;
+    private int puntos;
+    private int velx;
+    private boolean herido;
+    private int tiempoHeridoMax;
     private int tiempoHerido;
 
-    public Sumo(Texture tex, Sound ss) {
-        sumoImage = tex;
-        sonidoHerido = ss;
+    // Constructor privado para que solo el Builder pueda crear instancias de Sumo
+    private Sumo(SumoBuilder builder) {
+        this.sumoImage = builder.sumoImage;
+        this.sonidoHerido = builder.sonidoHerido;
+        this.vidas = builder.vidas;
+        this.puntos = builder.puntos;
+        this.velx = builder.velx;
+        this.herido = builder.herido;
+        this.tiempoHeridoMax = builder.tiempoHeridoMax;
+        this.tiempoHerido = builder.tiempoHerido;
     }
 
     public int getVidas() {
@@ -60,7 +67,6 @@ public class Sumo {
         this.vidas++;
     }
 
-
     public void crear() {
         sumo = new Rectangle();
         sumo.x = 1920 / 2 - 64 / 2;
@@ -92,7 +98,6 @@ public class Sumo {
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) sumo.x -= velx * Gdx.graphics.getDeltaTime();
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) sumo.x += velx * Gdx.graphics.getDeltaTime();
         if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
-        
             PausaScreen pausaScreen = new PausaScreen(game);
             game.setScreen(pausaScreen);
         }
@@ -104,5 +109,56 @@ public class Sumo {
     public void destruir() {
         sumoImage.dispose();
         sonidoHerido.dispose();
+    }
+
+    // Clase Builder estática
+    public static class SumoBuilder {
+        private Texture sumoImage;
+        private Sound sonidoHerido;
+        private int vidas = 3; // valor por defecto
+        private int puntos = 0; // valor por defecto
+        private int velx = 600; // valor por defecto
+        private boolean herido = false; // valor por defecto
+        private int tiempoHeridoMax = 50; // valor por defecto
+        private int tiempoHerido = 0; // valor por defecto
+
+        public SumoBuilder(Texture sumoImage, Sound sonidoHerido) {
+            this.sumoImage = sumoImage;
+            this.sonidoHerido = sonidoHerido;
+        }
+
+        public SumoBuilder vidas(int vidas) {
+            this.vidas = vidas;
+            return this;
+        }
+
+        public SumoBuilder puntos(int puntos) {
+            this.puntos = puntos;
+            return this;
+        }
+
+        public SumoBuilder velx(int velx) {
+            this.velx = velx;
+            return this;
+        }
+
+        public SumoBuilder herido(boolean herido) {
+            this.herido = herido;
+            return this;
+        }
+
+        public SumoBuilder tiempoHeridoMax(int tiempoHeridoMax) {
+            this.tiempoHeridoMax = tiempoHeridoMax;
+            return this;
+        }
+
+        public SumoBuilder tiempoHerido(int tiempoHerido) {
+            this.tiempoHerido = tiempoHerido;
+            return this;
+        }
+
+        public Sumo build() {
+            return new Sumo(this);
+        }
     }
 }

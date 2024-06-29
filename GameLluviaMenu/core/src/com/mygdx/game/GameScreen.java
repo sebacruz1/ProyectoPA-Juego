@@ -77,15 +77,15 @@ public class GameScreen extends AbstractScreen implements GameState {
 
     @Override
     protected void drawBackground() {
-        batch.draw(backgroundImage, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight()); // Ajusta la imagen al tamaño de la ventana
+        batch.draw(backgroundImage, 0, 0, 1920, 1080); // Ajusta la imagen al tamaño de la ventana
     }
 
     @Override
     protected void drawUI() {
-        font.draw(batch, "Gotas totales: " + sumo.getPuntos(), 5, 920); // Cerca del borde superior de la pantalla
-        font.draw(batch, "Vidas : " + sumo.getVidas(), 500, 920); // Cerca del borde superior, más hacia el centro
-        font.draw(batch, "Puntuación Maxima : " + game.getHigherScore(), 5, 850); // Un poco más abajo
-        font.draw(batch, "Nivel : " + level, Gdx.graphics.getWidth() / 2 - 50, 920); // Centrado horizontalmente en la parte superior
+        font.draw(batch, "Gotas totales: " + sumo.getPuntos(), 5, 1050); // Cerca del borde superior de la pantalla
+        font.draw(batch, "Vidas : " + sumo.getVidas(), 500, 1050); // Cerca del borde superior, más hacia el centro
+        font.draw(batch, "Puntuación Maxima : " + game.getHigherScore(), 5, 1020); // Un poco más abajo
+        font.draw(batch, "Nivel : " + level, Gdx.graphics.getWidth() / 2 - 50, 1050); // Centrado horizontalmente en la parte superior
         font.draw(batch, "Speed : " + (initialSpeed + (level - 1) * 100.0f), 1400, 920); // Ajustado a la derecha
     }
 

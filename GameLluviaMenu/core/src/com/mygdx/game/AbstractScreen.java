@@ -36,4 +36,31 @@ public abstract class AbstractScreen implements Screen {
 
     @Override
     public void dispose() {}
+
+    // Eliminamos la palabra clave 'final' para permitir, si es necesario, la sobrescritura.
+    public void render(float delta) {
+        clearScreen();
+        updateCamera();
+        batch.setProjectionMatrix(camera.combined);
+
+        batch.begin();
+        drawBackground();
+        drawUI();
+        if (!updateGameLogic(delta)) {
+            onGameOver();
+        }
+        batch.end();
+    }
+
+    protected abstract void clearScreen();
+
+    protected abstract void updateCamera();
+
+    protected abstract void drawBackground();
+
+    protected abstract void drawUI();
+
+    protected abstract boolean updateGameLogic(float delta);
+
+    protected abstract void onGameOver();
 }

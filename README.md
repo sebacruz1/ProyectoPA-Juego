@@ -1,6 +1,6 @@
 ---
 
-# Proyecto Videojuego (GM) Avance
+# Proyecto Videojuego (GM) Final
 
 ## Descripción General
 Este proyecto ofrece un juego en el cual se modificara de manera estetica y estrucutura de codigos, implementando metodologias de encapsulamiento, clases abstractas y interfaces entre otros.

@@ -26,6 +26,7 @@ public class GameScreen extends AbstractScreen implements GameState {
                 .puntos(0)
                 .velx(600)
                 .tiempoHeridoMax(50)
+                .movementStrategy(new HorizontalMovementStrategy(600)) // Asignar estrategia de movimiento
                 .build();
 
         // Load the drop sound effect and the rain background "music"
@@ -64,23 +65,41 @@ public class GameScreen extends AbstractScreen implements GameState {
     }
 
     @Override
+    public void render(float delta) {
+        clearScreen();
+        updateCamera();
+
+        batch.setProjectionMatrix(camera.combined);
+        batch.begin();
+        drawBackground();
+        drawUI();
+        
+        if (!updateGameLogic(delta)) {
+            onGameOver();
+        }
+        
+        batch.end();
+    }
+
+    @Override
+    public void dispose() {
+        backgroundImage.dispose();
+    }
+
     protected void clearScreen() {
         ScreenUtils.clear(0, 0, 0.2f, 1);
         Gdx.gl.glClearColor(0, 0, 0, 1); // Limpia la pantalla con un color, opcional si el fondo cubre todo
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
     }
 
-    @Override
     protected void updateCamera() {
         camera.update();
     }
 
-    @Override
     protected void drawBackground() {
         batch.draw(backgroundImage, 0, 0, 1920, 1080); // Ajusta la imagen al tamaño de la ventana
     }
 
-    @Override
     protected void drawUI() {
         font.draw(batch, "Gotas totales: " + sumo.getPuntos(), 5, 1050); // Cerca del borde superior de la pantalla
         font.draw(batch, "Vidas : " + sumo.getVidas(), 500, 1050); // Cerca del borde superior, más hacia el centro
@@ -89,10 +108,9 @@ public class GameScreen extends AbstractScreen implements GameState {
         font.draw(batch, "Speed : " + (initialSpeed + (level - 1) * 100.0f), 1400, 920); // Ajustado a la derecha
     }
 
-    @Override
     protected boolean updateGameLogic(float delta) {
         if (!sumo.estaHerido()) {
-            sumo.actualizarMovimiento(game);
+            sumo.actualizarMovimiento(delta); // Pasar delta time para actualizar el movimiento
             if (!lluvia.actualizarMovimiento(sumo)) {
                 if (game.getHigherScore() < sumo.getPuntos()) {
                     game.setHigherScore(sumo.getPuntos());
@@ -107,15 +125,9 @@ public class GameScreen extends AbstractScreen implements GameState {
         return true;
     }
 
-    @Override
     protected void onGameOver() {
         game.setScreen(new GameOverScreen(game));
         dispose();
-    }
-
-    @Override
-    public void dispose() {
-        backgroundImage.dispose();
     }
 
     private void checkLevelProgression() {

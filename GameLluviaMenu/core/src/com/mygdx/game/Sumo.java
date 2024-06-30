@@ -18,8 +18,8 @@ public class Sumo {
     private boolean herido;
     private int tiempoHeridoMax;
     private int tiempoHerido;
+    private MovementStrategy movementStrategy;
 
-    // Constructor privado para que solo el Builder pueda crear instancias de Sumo
     private Sumo(SumoBuilder builder) {
         this.sumoImage = builder.sumoImage;
         this.sonidoHerido = builder.sonidoHerido;
@@ -29,6 +29,7 @@ public class Sumo {
         this.herido = builder.herido;
         this.tiempoHeridoMax = builder.tiempoHeridoMax;
         this.tiempoHerido = builder.tiempoHerido;
+        this.movementStrategy = builder.movementStrategy;
     }
 
     public int getVidas() {
@@ -94,16 +95,14 @@ public class Sumo {
         }
     }
 
-    public void actualizarMovimiento(GameLluviaMenu game) {
-        if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) sumo.x -= velx * Gdx.graphics.getDeltaTime();
-        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) sumo.x += velx * Gdx.graphics.getDeltaTime();
-        if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
-            PausaScreen pausaScreen = new PausaScreen(game);
-            game.setScreen(pausaScreen);
+    public void actualizarMovimiento(float deltaTime) {
+        if (movementStrategy != null) {
+            movementStrategy.move(sumo, deltaTime);
         }
-        // Asegurar que el sumo no salga de los bordes de la pantalla
-        if (sumo.x < 0) sumo.x = 0;
-        if (sumo.x > 1920 - 64) sumo.x = 1920 - 64;
+    }
+
+    public void setMovementStrategy(MovementStrategy movementStrategy) {
+        this.movementStrategy = movementStrategy;
     }
 
     public void destruir() {
@@ -111,16 +110,16 @@ public class Sumo {
         sonidoHerido.dispose();
     }
 
-    // Clase Builder estática
     public static class SumoBuilder {
         private Texture sumoImage;
         private Sound sonidoHerido;
-        private int vidas = 3; // valor por defecto
-        private int puntos = 0; // valor por defecto
-        private int velx = 600; // valor por defecto
-        private boolean herido = false; // valor por defecto
-        private int tiempoHeridoMax = 50; // valor por defecto
-        private int tiempoHerido = 0; // valor por defecto
+        private int vidas = 3;
+        private int puntos = 0;
+        private int velx = 600;
+        private boolean herido = false;
+        private int tiempoHeridoMax = 50;
+        private int tiempoHerido = 0;
+        private MovementStrategy movementStrategy;
 
         public SumoBuilder(Texture sumoImage, Sound sonidoHerido) {
             this.sumoImage = sumoImage;
@@ -154,6 +153,11 @@ public class Sumo {
 
         public SumoBuilder tiempoHerido(int tiempoHerido) {
             this.tiempoHerido = tiempoHerido;
+            return this;
+        }
+
+        public SumoBuilder movementStrategy(MovementStrategy movementStrategy) {
+            this.movementStrategy = movementStrategy;
             return this;
         }
 
